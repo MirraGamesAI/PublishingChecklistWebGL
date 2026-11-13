@@ -154,7 +154,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 - [ ] **F1.** On desktop, the whole game is playable with keyboard and mouse.
 - [ ] **F2.** On mobile, the whole game is playable with touch only.
 - [ ] **F3.** Every interaction works with both mouse and touch, on any device.
-- [ ] **F4.** Touch controls depend on the device type from the platform, not on touch support, because many laptops have touchscreens. Tablets get touch controls too.
+- [ ] **F4.** Controls and hints depend on the device type from the platform, not on touch support, because many laptops have touchscreens. Tablets get touch controls too.
 - [ ] **F5.** Key bindings use physical key positions, so WASD also works on AZERTY and other layouts.
   - Unity: Input System `Key` values are physical positions.
 - [ ] **F6.** No game actions on browser or system shortcuts such as Ctrl/Cmd+W, Ctrl+R, F5, F11 or Alt+Tab.
@@ -168,15 +168,18 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
   - Unity: keep `WebGLInput.captureAllKeyboardInput` turned on.
 - [ ] **F12.** Tapping a text field on mobile opens the on-screen keyboard.
 - [ ] **F13.** No input lag, and no ignored input.
-- [ ] **F14.** Controls are explained in the game before or during the first play: touch hints on mobile, key hints on desktop.
-- [ ] **F15.** No vibration.
+- [ ] **F14.** Controls adapt to the device: touch controls on phones and tablets, keyboard and mouse on desktop.
+- [ ] **F15.** Hints match the device: no key names or icons on mobile, no touch controls or "tap" texts on desktop.
+- [ ] **F16.** Controls are explained in the game before or during the first play.
+- [ ] **F17.** Every text that names a key, click or tap has a version for the other device.
+- [ ] **F18.** No vibration.
 
 **Platform-specific**
 
-- [ ] **F16.** **YouTube:** Esc key events are never blocked.
-- [ ] **F17.** **Poki:** Esc or Space pauses and resumes keyboard-controlled games.
-- [ ] **F18.** **Yandex:** The remote's arrow keys, OK and Back are enough to play the whole game on TV.
-- [ ] **F19.** **Yandex:** Main screens work with one hand and need no scrolling. Strategy, RPG and similar genres are exempt.
+- [ ] **F19.** **YouTube:** Esc key events are never blocked.
+- [ ] **F20.** **Poki:** Esc or Space pauses and resumes keyboard-controlled games.
+- [ ] **F21.** **Yandex:** The remote's arrow keys, OK and Back are enough to play the whole game on TV.
+- [ ] **F22.** **Yandex:** Main screens work with one hand and need no scrolling. Strategy, RPG and similar genres are exempt.
 
 ## G. User interface
 
@@ -193,7 +196,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 - [ ] **G10.** No fullscreen button.
 - [ ] **G11.** No exit or quit button.
 - [ ] **G12.** No browser scroll bars or pull-to-refresh. Scrolling inside the game is fine.
-- [ ] **G13.** Every visible button works. No placeholders, debug UI, FPS counters or test buttons.
+- [ ] **G13.** Every visible button works on the current device. No placeholders, debug UI, FPS counters or test buttons.
 - [ ] **G14.** New players reach gameplay with one click at most.
 - [ ] **G15.** Complex mechanics get a short, visual tutorial at the start that players can skip.
 - [ ] **G16.** Cutscenes and intros can be skipped.
@@ -301,28 +304,30 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 - [ ] **M4.** No drugs, alcohol, tobacco, sexual content or discrimination.
 - [ ] **M5.** All code, art, music, fonts and names are original or licensed, with proof ready on request. No clones, reskins or barely changed templates.
 - [ ] **M6.** No well-known names or trademarks in the title or the game.
-- [ ] **M7.** No interactive AI in the game. Assets generated with AI in advance are fine, with no watermarks or leftover prompt text.
-- [ ] **M8.** No AI-made likenesses of real people, places or events.
-- [ ] **M9.** No real money, prizes, promo codes or tradable items. Rewards have value only inside the game.
-- [ ] **M10.** No extra user agreements, terms or consent popups in the game.
-- [ ] **M11.** Updates keep the same game. A different game is a new submission.
+- [ ] **M7.** No characters, models, textures or sounds copied from or imitating a known game, film or brand, such as Roblox avatars or Minecraft blocks and mobs.
+- [ ] **M8.** No interactive AI in the game. Assets generated with AI in advance are fine, with no watermarks or leftover prompt text.
+- [ ] **M9.** No real or photorealistic people: no photos, video or face scans, AI-generated included.
+- [ ] **M10.** No AI-made imitations of real places or events.
+- [ ] **M11.** No real money, prizes, promo codes or tradable items. Rewards have value only inside the game.
+- [ ] **M12.** No extra user agreements, terms or consent popups in the game.
+- [ ] **M13.** Updates keep the same game. A different game is a new submission.
 
 **Links and branding**
 
-- [ ] **M12.** No outgoing links of any kind: websites, social media, stores, other games, surveys, QR codes.
-- [ ] **M13.** No studio logos, contact details or social handles. A credits screen is allowed only for license attributions.
-- [ ] **M14.** No mentions of the App Store, Google Play or other app stores.
+- [ ] **M14.** No outgoing links of any kind: websites, social media, stores, other games, surveys, QR codes.
+- [ ] **M15.** No studio logos, contact details or social handles. A credits screen is allowed only for license attributions.
+- [ ] **M16.** No mentions of the App Store, Google Play or other app stores.
 
 **Platform-specific**
 
-- [ ] **M15.** **CoolMath:** No violence or shooting at all.
-- [ ] **M16.** **Poki:** You can show which AI tools and prompts were used, on request.
-- [ ] **M17.** **Poki:** A studio logo, if used, appears only on the loading screen, and outgoing links open only through the SDK.
-- [ ] **M18.** **Yandex:** Links to your own catalog games, if used, go only through the SDK, never during gameplay, and are clearly marked. None on TV.
-- [ ] **M19.** **Yandex:** A community link, if used, points only to a group for your Yandex games, with "Yandex Games" in its name and no outside links.
-- [ ] **M20.** **CrazyGames:** Discord or website links, and Steam or Epic links, if used, appear only in the main menu or at the end of a demo, and never as the main call to action.
-- [ ] **M21.** **CrazyGames:** If the game collects personal data beyond the SDK, new players see a short privacy notice.
-- [ ] **M22.** **OK:** Ads for your own OK games, if used, appear only in a closable window or a 760x60 box.
+- [ ] **M17.** **CoolMath:** No violence or shooting at all.
+- [ ] **M18.** **Poki:** You can show which AI tools and prompts were used, on request.
+- [ ] **M19.** **Poki:** A studio logo, if used, appears only on the loading screen, and outgoing links open only through the SDK.
+- [ ] **M20.** **Yandex:** Links to your own catalog games, if used, go only through the SDK, never during gameplay, and are clearly marked. None on TV.
+- [ ] **M21.** **Yandex:** A community link, if used, points only to a group for your Yandex games, with "Yandex Games" in its name and no outside links.
+- [ ] **M22.** **CrazyGames:** Discord or website links, and Steam or Epic links, if used, appear only in the main menu or at the end of a demo, and never as the main call to action.
+- [ ] **M23.** **CrazyGames:** If the game collects personal data beyond the SDK, new players see a short privacy notice.
+- [ ] **M24.** **OK:** Ads for your own OK games, if used, appear only in a closable window or a 760x60 box.
 
 ## Sources
 
