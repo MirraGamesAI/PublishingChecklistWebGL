@@ -1,6 +1,6 @@
 # Unity WebGL Publishing Checklist
 
-One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It covers the game build. Store page material such as thumbnails and descriptions is not covered.
+One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It covers the game build. Store page material such as thumbnails and descriptions is not covered.
 
 1. Main items pass on every platform: build them once.
 2. Items that start with a platform name apply only there: enable them in code with a platform check.
@@ -77,7 +77,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 
 - [ ] **B21.** **GameDistribution:** A preroll ad plays after the first press of Play.
 - [ ] **B22.** **GameDistribution:** The interstitial cooldown can drop to 2 minutes.
-- [ ] **B23.** **Yandex, CrazyGames, Poki, Lagged, WG Playground:** The platform limits ad frequency itself, so the cooldown can drop to 0 and request an ad at every natural break.
+- [ ] **B23.** **Yandex, CrazyGames, Poki, Lagged, WG Playground, Playgama:** The platform limits ad frequency itself, so the cooldown can drop to 0 and request an ad at every natural break.
 - [ ] **B24.** **CrazyGames, GameDistribution:** In-game banners, if used, go only on non-gameplay screens that stay open 5+ seconds. Max 2 per screen, never over the UI, at least 20 px from buttons.
 - [ ] **B25.** **Poki:** No custom "ad blocked" messages: the platform shows its own.
 
@@ -227,7 +227,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 
 **Platform-specific**
 
-- [ ] **H10.** **YouTube, CrazyGames:** The language comes from the platform, then English. The system language is never read.
+- [ ] **H10.** **YouTube, CrazyGames, Playgama:** The language comes from the platform, then English. The system language is never read.
   - Unity: in WebGL, `Application.systemLanguage` reads the browser language.
 - [ ] **H11.** **OK:** The whole interface is in Russian.
 
@@ -334,7 +334,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 
 ## Sources
 
-Checked on 10 November 2026, together with Mirra Games publishing experience. Sources marked "partial" are platforms that publish only part of their rules.
+Checked on 10 November 2026, together with Mirra Games publishing experience. Playgama was added on 13 November 2026. Sources marked "partial" are platforms that publish only part of their rules.
 
 1. [CrazyGames requirements](https://docs.crazygames.com/requirements/intro/)
 2. [GameDistribution developer guidelines](https://static.gamedistribution.com/developer/developers-guidelines.html)
@@ -351,3 +351,5 @@ Checked on 10 November 2026, together with Mirra Games publishing experience. So
 13. [WG Playground developers, partial](https://www.wgplayground.com/developers)
 14. [WG Playground content guidelines, partial](https://www.wgplayground.com/content-guidelines)
 15. [VK moderation rules, partial](https://dev.vk.ru/en/games-catalog-rules)
+16. [Playgama game requirements](https://wiki.playgama.com/playgama/game-requirements)
+17. [Playgama Bridge SDK required steps](https://wiki.playgama.com/playgama/bridge-sdk/api)
