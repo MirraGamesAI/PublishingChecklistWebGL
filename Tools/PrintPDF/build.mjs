@@ -114,16 +114,31 @@ function appendToList(blocks, entry) {
   else blocks.push({ type: "list", entries: [entry] })
 }
 
-/** Parses the checklist's markdown subset into a title, intro, guide and sections. */
+/** Parses the checklist's markdown subset into a title, notices, intro, guide and sections. */
 function parseChecklist(markdown) {
-  const checklist = { title: "", lead: [], guide: [], sections: [] }
+  const checklist = { title: "", notices: [], lead: [], guide: [], sections: [] }
   let section = null
   let lastItem = null
+  let notice = null
 
   for (const rawLine of markdown.replace(/\r\n?/g, "\n").split("\n")) {
     const line = rawLine.trimEnd()
-    if (!line.trim()) continue
     let match
+
+    // A quote block is a notice. A first line like "[!WARNING]" sets its kind, as in GitHub alerts.
+    if ((match = /^> ?(.*)$/.exec(line))) {
+      const kind = /^\[!([A-Za-z]+)\]$/.exec(match[1])
+      if (kind || !notice) {
+        notice = { type: "notice", kind: kind ? kind[1].toLowerCase() : "note", lines: [] }
+        if (section) section.blocks.push(notice)
+        else checklist.notices.push(notice)
+      }
+      if (!kind && match[1]) notice.lines.push(match[1])
+      lastItem = null
+      continue
+    }
+    notice = null
+    if (!line.trim()) continue
 
     if ((match = /^# (.+)$/.exec(line))) {
       checklist.title = match[1]
@@ -162,8 +177,14 @@ function renderHint(hint) {
   return `<p class="hint"><span class="hint-label">${match[1]}</span>${renderInline(match[2])}</p>`
 }
 
+function renderNotice(notice) {
+  return `<aside class="notice notice-${notice.kind}">${notice.lines.map((line) => `<p>${renderInline(line)}</p>`).join("")}</aside>`
+}
+
 function renderBlock(block, strings) {
   switch (block.type) {
+    case "notice":
+      return renderNotice(block)
     case "item":
       return `<div class="item">
   <span class="box"></span>
@@ -231,6 +252,7 @@ function renderCover(checklist, language, logo) {
   ${logo ? `<img class="logo" src="${logo}" alt="${escapeHtml(BRAND)}">` : ""}
   <div class="brand">${escapeHtml(BRAND)}</div>
   <h1>${escapeHtml(checklist.title)}</h1>
+  ${checklist.notices.map(renderNotice).join("\n  ")}
   ${checklist.lead.map((line) => `<p class="lead">${renderInline(line)}</p>`).join("")}
   <div class="chips">${chips}</div>
   <div class="meta">${meta.map((entry) => `<span>${escapeHtml(entry)}</span>`).join("")}</div>
@@ -277,6 +299,12 @@ strong { color: var(--ink); font-weight: 600; }
 .logo { display: block; width: 24mm; height: 24mm; margin: 0 0 7mm -4.4mm; }
 .brand { font-size: 8pt; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
 h1 { margin: 10px 0 14px; font-size: 30pt; line-height: 1.08; letter-spacing: -0.025em; color: var(--ink); font-weight: 700; max-width: 160mm; }
+.notice { margin: 10px 0 12px; padding: 9px 14px; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--accent-soft); color: var(--ink); font-size: 9.4pt; line-height: 1.45; break-inside: avoid; }
+.notice p { margin: 0; }
+.notice p + p { margin-top: 4px; }
+.notice-warning, .notice-caution { border-left-color: #d97706; background: #fff4e0; }
+.notice-warning strong, .notice-caution strong { color: #8a4b00; }
+.cover .notice { margin: 0 0 14px; max-width: 165mm; }
 .lead { margin: 0 0 6px; font-size: 11pt; line-height: 1.5; color: var(--body); max-width: 155mm; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 12px; }
 .chip { font-size: 8pt; font-weight: 600; padding: 4px 11px; border-radius: 999px; }

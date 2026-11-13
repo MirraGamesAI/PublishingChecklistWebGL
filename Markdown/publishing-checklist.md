@@ -1,5 +1,8 @@
 # Unity WebGL Publishing Checklist
 
+> [!WARNING]
+> **Check the build yourself before you send it to us.** Every check that applies to your game and its platforms must pass first. A build that fails comes back for fixes, and every round costs time on both sides, so please check carefully.
+
 One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It covers the game build. Store page material such as thumbnails and descriptions is not covered.
 
 1. Main items pass on every platform: build them once.
