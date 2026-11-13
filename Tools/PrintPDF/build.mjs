@@ -22,12 +22,15 @@ const DEFAULT_DOCUMENTS = [
   { markdown: path.join(MARKDOWN_DIRECTORY, "publishing-checklist-russian.md"), language: "ru" },
 ]
 
-/** Interface text per language. The markdown supplies everything else. */
+/** Interface text per language. The markdown supplies everything else. Markers map each automation hint to its CSS class suffix. */
 const LANGUAGES = {
   en: {
     howToRead: "How to read",
     sections: "Sections",
     platformSpecific: "Platform-specific",
+    automatable: "Can be automated",
+    automatableCount: "can be automated",
+    markers: { "Auto test": "auto-test", "Ask AI": "ask-ai" },
     optional: "Optional",
     checkedOn: "Checked on",
     checkForms: { one: "check", other: "checks" },
@@ -37,6 +40,9 @@ const LANGUAGES = {
     howToRead: "Как читать",
     sections: "Разделы",
     platformSpecific: "Для отдельных площадок",
+    automatable: "Можно автоматизировать",
+    automatableCount: "можно автоматизировать",
+    markers: { "Автотест": "auto-test", "Спросить ИИ": "ask-ai" },
     optional: "Опционально",
     checkedOn: "Проверено",
     checkForms: { one: "проверка", few: "проверки", many: "проверок", other: "проверки" },
@@ -86,8 +92,8 @@ function formatCount(language, count, forms) {
   return `${count} ${forms[category] ?? forms.other}`
 }
 
-/** Converts the inline markdown used by the checklist: code spans, bold and links. */
-function renderInline(text) {
+/** Converts the inline markdown used by the checklist: code spans, bold and links. With strings, a code span that names a marker becomes its tag. */
+function renderInline(text, strings = null) {
   const codeSpans = []
   let html = escapeHtml(text).replace(/`([^`]+)`/g, (_, code) => {
     codeSpans.push(code)
@@ -95,7 +101,17 @@ function renderInline(text) {
   })
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-  return html.replace(/@@CODE(\d+)@@/g, (_, index) => `<code>${codeSpans[Number(index)]}</code>`)
+  return html.replace(/@@CODE(\d+)@@/g, (_, index) => {
+    const code = codeSpans[Number(index)]
+    return strings && Object.hasOwn(strings.markers, code) ? renderMarker(code, strings) : `<code>${code}</code>`
+  })
+}
+
+/** Splits a leading "`Marker`" code span off an item's text when it names a known automation marker. */
+function splitMarker(text, strings) {
+  const match = /^`([^`]+)` (.+)$/.exec(text)
+  if (!match || !Object.hasOwn(strings.markers, match[1])) return { marker: "", text }
+  return { marker: match[1], text: match[2] }
 }
 
 /** Splits a leading "**Platform, Platform:**" prefix off an item's text. */
@@ -128,6 +144,7 @@ function parseChecklist(markdown, strings) {
   let section = null
   let lastItem = null
   let notice = null
+  let automatable = false
 
   for (const rawLine of markdown.replace(/\r\n?/g, "\n").split("\n")) {
     const line = rawLine.trimEnd()
@@ -151,18 +168,25 @@ function parseChecklist(markdown, strings) {
     if ((match = /^# (.+)$/.exec(line))) {
       checklist.title = match[1]
     } else if ((match = /^## (?:([A-Z])\. )?(.+)$/.exec(line))) {
-      section = { letter: match[1] ?? "", ...splitOptional(match[2], strings), blocks: [], itemCount: 0 }
+      section = { letter: match[1] ?? "", ...splitOptional(match[2], strings), blocks: [], itemCount: 0, automatableCount: 0 }
       checklist.sections.push(section)
       lastItem = null
+      automatable = false
     } else if ((match = /^- \[ \] \*\*([A-Z]\d+)\.\*\* (.+)$/.exec(line)) && section) {
-      lastItem = { type: "item", id: match[1], hints: [], ...splitPlatforms(match[2]) }
+      const { marker, text } = splitMarker(match[2], strings)
+      if (automatable !== Boolean(marker)) {
+        console.warn(`${match[1]} ${automatable ? "has no marker inside" : "has a marker outside"} the "${strings.automatable}" block.`)
+      }
+      lastItem = { type: "item", id: match[1], marker, hints: [], ...splitPlatforms(text) }
       section.blocks.push(lastItem)
       section.itemCount++
+      if (marker) section.automatableCount++
     } else if ((match = /^\s+- (.+)$/.exec(line)) && lastItem) {
       lastItem.hints.push(match[1])
     } else if ((match = /^\*\*(.+?)\*\*(?: \((.+)\))?$/.exec(line)) && section) {
       const optional = match[2] === strings.optional
       section.blocks.push({ type: "label", text: match[1], note: optional ? "" : match[2] ?? "", optional })
+      automatable = match[1] === strings.automatable
       lastItem = null
     } else if ((match = /^\d+\. (.+)$/.exec(line))) {
       if (section) appendToList(section.blocks, match[1])
@@ -186,6 +210,10 @@ function renderHint(hint) {
   return `<p class="hint"><span class="hint-label">${match[1]}</span>${renderInline(match[2])}</p>`
 }
 
+function renderMarker(name, strings) {
+  return `<span class="marker marker-${strings.markers[name]}">${escapeHtml(name)}</span>`
+}
+
 function renderOptional(strings) {
   return `<span class="optional">${escapeHtml(strings.optional)}</span>`
 }
@@ -202,13 +230,13 @@ function renderBlock(block, strings) {
       return `<div class="item">
   <span class="box"></span>
   <span class="id">${block.id}</span>
-  <div class="text"><p>${block.platforms.map(renderTag).join("")}${renderInline(block.text)}</p>${block.hints.map(renderHint).join("")}</div>
+  <div class="text"><p>${block.marker ? renderMarker(block.marker, strings) : ""}${block.platforms.map(renderTag).join("")}${renderInline(block.text)}</p>${block.hints.map(renderHint).join("")}</div>
 </div>`
     case "label": {
-      const isPlatformLabel = block.text === strings.platformSpecific
+      const modifier = block.text === strings.platformSpecific ? " label-platform" : block.text === strings.automatable ? " label-automatable" : ""
       const note = block.note ? `<span class="label-note">${renderInline(block.note)}</span>` : ""
       const optional = block.optional ? renderOptional(strings) : ""
-      return `<div class="label${isPlatformLabel ? " label-platform" : ""}">${escapeHtml(block.text)}${optional}${note}</div>`
+      return `<div class="label${modifier}">${escapeHtml(block.text)}${optional}${note}</div>`
     }
     case "list":
       return `<ol class="sources">${block.entries.map((entry) => {
@@ -248,6 +276,7 @@ function renderCover(checklist, language, logo) {
   const checkedOn = findCheckedOnDate(checklist, strings)
   const lettered = checklist.sections.filter((section) => section.letter)
   const itemTotal = lettered.reduce((sum, section) => sum + section.itemCount, 0)
+  const automatableTotal = lettered.reduce((sum, section) => sum + section.automatableCount, 0)
   const chips = Object.values(PLATFORMS)
     .map((platform) => `<span class="chip tag-${platform.key}">${escapeHtml(platform.fullName)}</span>`)
     .join("")
@@ -258,6 +287,7 @@ function renderCover(checklist, language, logo) {
     .join("")
   const meta = [
     formatCount(language, itemTotal, strings.checkForms),
+    automatableTotal ? `${automatableTotal} ${strings.automatableCount}` : "",
     formatCount(language, lettered.length, strings.sectionForms),
     checkedOn ? `${strings.checkedOn} ${checkedOn}` : "",
   ].filter(Boolean)
@@ -272,7 +302,7 @@ function renderCover(checklist, language, logo) {
   <div class="meta">${meta.map((entry) => `<span>${escapeHtml(entry)}</span>`).join("")}</div>
   <div class="cover-bottom">
     <div class="block-title">${escapeHtml(strings.howToRead)}</div>
-    <ol class="guide">${checklist.guide.map((line) => `<li><span>${renderInline(line)}</span></li>`).join("")}</ol>
+    <ol class="guide">${checklist.guide.map((line) => `<li><span>${renderInline(line, strings)}</span></li>`).join("")}</ol>
     <div class="block-title">${escapeHtml(strings.sections)}</div>
     <nav class="contents" style="grid-template-rows: repeat(${Math.ceil(lettered.length / 2)}, auto)">${contents}</nav>
   </div>
@@ -322,7 +352,7 @@ h1 { margin: 10px 0 14px; font-size: 30pt; line-height: 1.08; letter-spacing: -0
 .lead { margin: 0 0 6px; font-size: 11pt; line-height: 1.5; color: var(--body); max-width: 155mm; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 12px; }
 .chip { font-size: 8pt; font-weight: 600; padding: 4px 11px; border-radius: 999px; }
-.meta { display: flex; gap: 18px; font-size: 8.5pt; color: var(--muted); }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 8.5pt; color: var(--muted); }
 .meta span + span { padding-left: 18px; border-left: 1px solid var(--line); }
 .cover-bottom { margin-top: auto; }
 .block-title { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
@@ -340,6 +370,10 @@ h1 { margin: 10px 0 14px; font-size: 30pt; line-height: 1.08; letter-spacing: -0
 .letter-small { width: 18px; height: 18px; border-radius: 5px; font-size: 8pt; }
 .label { margin: 12px 0 0; padding: 0 0 4px; font-size: 7.2pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); break-after: avoid; }
 .label-platform { color: var(--accent); }
+.label-automatable { margin-top: 14px; padding-top: 8px; border-top: 1px dashed #c3cad3; color: var(--accent); }
+.marker { display: inline-block; margin-right: 5px; padding: 0 5px; border-radius: 4px; font-size: 6.8pt; font-weight: 700; letter-spacing: 0.05em; line-height: 1.65; text-transform: uppercase; white-space: nowrap; vertical-align: 1px; }
+.marker-auto-test { background: #e4eefb; color: #1f5fa8; }
+.marker-ask-ai { background: #efe9fb; color: #5b3db5; }
 .label-note { margin-left: 8px; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--muted); }
 .optional { display: inline-block; margin-left: 8px; padding: 0 7px; border: 1px solid #c3cad3; border-radius: 999px; color: var(--muted); font-size: 6.8pt; font-weight: 600; letter-spacing: 0.06em; line-height: 1.7; text-transform: uppercase; vertical-align: 1px; }
 .section h2 .optional { margin-left: 0; }
