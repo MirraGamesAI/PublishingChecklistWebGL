@@ -13,6 +13,7 @@ const BRAND = "Mirra Games"
 const SCRIPT_DIRECTORY = path.dirname(fileURLToPath(import.meta.url))
 const REPOSITORY_DIRECTORY = path.resolve(SCRIPT_DIRECTORY, "..", "..")
 const MARKDOWN_DIRECTORY = path.join(REPOSITORY_DIRECTORY, "Markdown")
+const CHANGELOG_PATH = path.join(REPOSITORY_DIRECTORY, "CHANGELOG.md")
 const LOGO_PATH = path.join(SCRIPT_DIRECTORY, "Assets", "MirraGames.png")
 const DEFAULT_OUTPUT = path.join(SCRIPT_DIRECTORY, "Output")
 const BROWSER_TIMEOUT_MILLISECONDS = 120000
@@ -32,6 +33,7 @@ const LANGUAGES = {
     automatableCount: "can be automated",
     markers: { "Auto test": "auto-test", "Ask AI": "ask-ai" },
     optional: "Optional",
+    version: "Version",
     checkedOn: "Checked on",
     checkForms: { one: "check", other: "checks" },
     sectionForms: { one: "section", other: "sections" },
@@ -44,6 +46,7 @@ const LANGUAGES = {
     automatableCount: "можно автоматизировать",
     markers: { "Автотест": "auto-test", "Спросить ИИ": "ask-ai" },
     optional: "Опционально",
+    version: "Версия",
     checkedOn: "Проверено",
     checkForms: { one: "проверка", few: "проверки", many: "проверок", other: "проверки" },
     sectionForms: { one: "раздел", few: "раздела", many: "разделов", other: "раздела" },
@@ -271,7 +274,18 @@ function readLogo() {
   }
 }
 
-function renderCover(checklist, language, logo) {
+/** Reads the version from the changelog's first heading, such as "# Name 1.2.3". Returns an empty string if there is none. */
+function readVersion() {
+  try {
+    const heading = /^# .*$/m.exec(fs.readFileSync(CHANGELOG_PATH, "utf8"))
+    return /(\d+\.\d+\.\d+)\s*$/.exec(heading?.[0] ?? "")?.[1] ?? ""
+  } catch {
+    console.warn(`Changelog not found, building without a version: ${CHANGELOG_PATH}`)
+    return ""
+  }
+}
+
+function renderCover(checklist, language, branding) {
   const strings = LANGUAGES[language]
   const checkedOn = findCheckedOnDate(checklist, strings)
   const lettered = checklist.sections.filter((section) => section.letter)
@@ -286,6 +300,7 @@ function renderCover(checklist, language, logo) {
       : "")
     .join("")
   const meta = [
+    branding.version ? `${strings.version} ${branding.version}` : "",
     formatCount(language, itemTotal, strings.checkForms),
     automatableTotal ? `${automatableTotal} ${strings.automatableCount}` : "",
     formatCount(language, lettered.length, strings.sectionForms),
@@ -293,7 +308,7 @@ function renderCover(checklist, language, logo) {
   ].filter(Boolean)
 
   return `<header class="cover">
-  ${logo ? `<img class="logo" src="${logo}" alt="${escapeHtml(BRAND)}">` : ""}
+  ${branding.logo ? `<img class="logo" src="${branding.logo}" alt="${escapeHtml(BRAND)}">` : ""}
   <div class="brand">${escapeHtml(BRAND)}</div>
   <h1>${escapeHtml(checklist.title)}</h1>
   ${checklist.notices.map(renderNotice).join("\n  ")}
@@ -402,7 +417,7 @@ function findCheckedOnDate(checklist, strings) {
   return line ? line.text.slice(prefix.length).split(/[,.]/)[0].trim() : ""
 }
 
-function renderDocument(checklist, language, logo) {
+function renderDocument(checklist, language, branding) {
   const strings = LANGUAGES[language]
   return `<!doctype html>
 <html lang="${language}">
@@ -415,7 +430,7 @@ function renderDocument(checklist, language, logo) {
 <style>${renderStyles(checklist.title)}</style>
 </head>
 <body>
-${renderCover(checklist, language, logo)}
+${renderCover(checklist, language, branding)}
 <main>
 ${checklist.sections.map((section, index) => renderSection(section, index, strings)).join("\n")}
 </main>
@@ -461,7 +476,7 @@ function parseArguments(argumentList) {
   return options
 }
 
-function buildDocument(document, outputDirectory, browser, logo) {
+function buildDocument(document, outputDirectory, browser, branding) {
   if (!(document.language in LANGUAGES)) {
     throw new Error(`Unknown language "${document.language}". Known: ${Object.keys(LANGUAGES).join(", ")}`)
   }
@@ -471,7 +486,7 @@ function buildDocument(document, outputDirectory, browser, logo) {
   const baseName = path.basename(document.markdown, path.extname(document.markdown))
   const htmlPath = path.join(outputDirectory, `${baseName}.html`)
   const pdfPath = path.join(outputDirectory, `${baseName}.pdf`)
-  fs.writeFileSync(htmlPath, renderDocument(checklist, document.language, logo), "utf8")
+  fs.writeFileSync(htmlPath, renderDocument(checklist, document.language, branding), "utf8")
   console.log(`HTML: ${htmlPath}`)
 
   if (!browser) return
@@ -486,11 +501,11 @@ function main() {
   fs.mkdirSync(options.output, { recursive: true })
 
   const browser = findBrowser()
-  const logo = readLogo()
+  const branding = { logo: readLogo(), version: readVersion() }
   let failed = false
   for (const document of documents) {
     try {
-      buildDocument(document, options.output, browser, logo)
+      buildDocument(document, options.output, browser, branding)
     } catch (error) {
       console.error(error.message)
       failed = true
