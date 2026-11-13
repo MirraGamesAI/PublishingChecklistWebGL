@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Renders checklist markdown files into print-ready HTML pages and A4 PDFs with headless Chrome or Edge.
 // Usage: node build.mjs [checklist.md] [--language en|ru] [--output folder]
-// With no file it builds every document in DEFAULT_DOCUMENTS into ./out next to this script.
+// With no file it builds every document in DEFAULT_DOCUMENTS into ./Output next to this script.
 
 import fs from "node:fs"
 import os from "node:os"
@@ -11,14 +11,15 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 
 const BRAND = "Mirra Games"
 const SCRIPT_DIRECTORY = path.dirname(fileURLToPath(import.meta.url))
-const REPOSITORY_DIRECTORY = path.resolve(SCRIPT_DIRECTORY, "..")
-const LOGO_PATH = path.join(REPOSITORY_DIRECTORY, "pictures", "MirraGames.png")
-const DEFAULT_OUTPUT = path.join(SCRIPT_DIRECTORY, "out")
+const REPOSITORY_DIRECTORY = path.resolve(SCRIPT_DIRECTORY, "..", "..")
+const MARKDOWN_DIRECTORY = path.join(REPOSITORY_DIRECTORY, "Markdown")
+const LOGO_PATH = path.join(SCRIPT_DIRECTORY, "Assets", "MirraGames.png")
+const DEFAULT_OUTPUT = path.join(SCRIPT_DIRECTORY, "Output")
 const BROWSER_TIMEOUT_MILLISECONDS = 120000
 
 const DEFAULT_DOCUMENTS = [
-  { markdown: path.join(REPOSITORY_DIRECTORY, "platforms", "publishing-checklist.md"), language: "en" },
-  { markdown: path.join(REPOSITORY_DIRECTORY, "platforms", "publishing-checklist-russian.md"), language: "ru" },
+  { markdown: path.join(MARKDOWN_DIRECTORY, "publishing-checklist.md"), language: "en" },
+  { markdown: path.join(MARKDOWN_DIRECTORY, "publishing-checklist-russian.md"), language: "ru" },
 ]
 
 /** Interface text per language. The markdown supplies everything else. */
