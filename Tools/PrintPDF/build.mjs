@@ -353,29 +353,31 @@ a { color: var(--accent); text-decoration: none; }
 code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.86em; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; color: var(--ink); }
 strong { color: var(--ink); font-weight: 600; }
 
-.cover { height: 262mm; display: flex; flex-direction: column; break-after: page; padding-top: 8mm; }
+/* A minimum height keeps the contents at the page bottom, and lets an overlong cover flow onto a second page instead of overlapping the first section. */
+.cover { min-height: 262mm; display: flex; flex-direction: column; break-after: page; }
 /* The mark has transparent padding inside the image, so the negative margin lines its left edge up with the text. */
-.logo { display: block; width: 24mm; height: 24mm; margin: 0 0 7mm -4.4mm; }
+.logo { display: block; width: 18mm; height: 18mm; margin: 0 0 5mm -3.3mm; }
 .brand { font-size: 8pt; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
-h1 { margin: 10px 0 14px; font-size: 30pt; line-height: 1.08; letter-spacing: -0.025em; color: var(--ink); font-weight: 700; max-width: 160mm; }
+h1 { margin: 8px 0 12px; font-size: 27pt; line-height: 1.08; letter-spacing: -0.025em; color: var(--ink); font-weight: 700; max-width: 160mm; }
 .notice { margin: 10px 0 12px; padding: 9px 14px; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--accent-soft); color: var(--ink); font-size: 9.4pt; line-height: 1.45; break-inside: avoid; }
 .notice p { margin: 0; }
 .notice p + p { margin-top: 4px; }
 .notice-warning, .notice-caution { border-left-color: #d97706; background: #fff4e0; }
 .notice-warning strong, .notice-caution strong { color: #8a4b00; }
-.cover .notice { margin: 0 0 14px; max-width: 165mm; }
-.lead { margin: 0 0 6px; font-size: 11pt; line-height: 1.5; color: var(--body); max-width: 155mm; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 12px; }
+.cover .notice { margin: 0 0 12px; max-width: 165mm; }
+.lead { margin: 0 0 6px; font-size: 10.5pt; line-height: 1.45; color: var(--body); max-width: 155mm; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
 .chip { font-size: 8pt; font-weight: 600; padding: 4px 11px; border-radius: 999px; }
-.meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 8.5pt; color: var(--muted); }
-.meta span + span { padding-left: 18px; border-left: 1px solid var(--line); }
-.cover-bottom { margin-top: auto; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 13px; font-size: 8.3pt; color: var(--muted); }
+.meta span + span { padding-left: 13px; border-left: 1px solid var(--line); }
+.cover-bottom { margin-top: auto; padding-top: 14px; }
 .block-title { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
-.guide { list-style: none; counter-reset: guide; margin: 0 0 22px; padding: 12px 14px; background: var(--panel); border-radius: 10px; }
-.guide li { counter-increment: guide; display: grid; grid-template-columns: 22px 1fr; align-items: start; font-size: 9.5pt; padding: 3px 0; }
+.guide { list-style: none; counter-reset: guide; margin: 0 0 16px; padding: 10px 14px; background: var(--panel); border-radius: 10px; }
+.guide li { counter-increment: guide; display: grid; grid-template-columns: 22px 1fr; align-items: start; font-size: 9.3pt; padding: 2px 0; }
+.guide .marker { margin-right: 1px; }
 .guide li::before { content: counter(guide); width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: #ffffff; font-size: 7.5pt; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
 .contents { display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-flow: column; gap: 0 22px; }
-.contents a { display: flex; align-items: center; gap: 9px; padding: 5px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 9.5pt; }
+.contents a { display: flex; align-items: center; gap: 9px; padding: 4px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 9.5pt; }
 .contents-title { flex: 1; }
 .contents-count { color: var(--muted); font-size: 8pt; font-variant-numeric: tabular-nums; }
 
