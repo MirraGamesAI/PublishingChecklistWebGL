@@ -29,13 +29,15 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 - [ ] **A16.** The page never reloads or navigates away during play.
 - [ ] **A17.** The page shows only the game: no default Unity template frame, logo or footer.
   - Unity: start from a minimal WebGL template, such as MirraGamesTemplate.
+- [ ] **A18.** The platform SDK loads before any other script inside the iframe.
+- [ ] **A19.** The build loads on hosts that send no compression headers.
+  - Unity: enable Decompression Fallback.
 
 **Platform-specific**
 
-- [ ] **A18.** **YouTube:** The platform SDK loads before the Unity loader.
-- [ ] **A19.** **YouTube:** No network requests except through the platform SDK.
-- [ ] **A20.** **GamePix:** No third-party SDKs besides the GamePix and Xsolla ones.
-- [ ] **A21.** **VK:** The platform's init event is sent at startup, or the game won't run.
+- [ ] **A20.** **YouTube:** No network requests except through the platform SDK.
+- [ ] **A21.** **GamePix:** No third-party SDKs besides the GamePix and Xsolla ones.
+- [ ] **A22.** **VK:** The platform's init event is sent at startup, or the game won't run.
 
 ## B. Advertisement
 
@@ -64,7 +66,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 - [ ] **B15.** The reward is given only after the ad completes, never after an error or early close, and it is shown clearly.
 - [ ] **B16.** One reward needs exactly one ad.
 - [ ] **B17.** No rewarded buttons during active play. A continue option shows at the same time, at least as large, next to or above the reward button.
-- [ ] **B18.** Rewarded offers are occasional: not on every death, and never right after an interstitial.
+- [ ] **B18.** Rewarded offers are occasional: a revive at most once per attempt, and never right after an interstitial.
 - [ ] **B19.** The same reward can also be earned without ads, for example with coins.
 
 **Banners**
@@ -104,7 +106,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 
 **Saves**
 
-- [ ] **D1.** All saves go through one save layer. It uses the platform's cloud save, or PlayerPrefs where the platform has none.
+- [ ] **D1.** All saves go through one save layer. It uses the platform's save API wherever one exists, and PlayerPrefs only where there is none.
   - Unity: one save interface with a backend per platform.
 - [ ] **D2.** The game loads saved data before play starts or anything is saved.
 - [ ] **D3.** Progress saves right after each meaningful action: level done, unlock, purchase.
@@ -127,7 +129,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 
 **Platform-specific**
 
-- [ ] **D16.** **YouTube:** Only the platform's save API, and no name or text input.
+- [ ] **D16.** **YouTube:** No name or text input.
 - [ ] **D17.** **YouTube, GameDistribution:** No login or account screens.
 - [ ] **D18.** **CrazyGames:** If the game has accounts, players are signed in automatically and see their platform name and avatar.
 - [ ] **D19.** **CrazyGames:** QA rejects any login, token, Xsolla or multiplayer call the game doesn't need.
@@ -184,7 +186,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 ## G. User interface
 
 - [ ] **G1.** The game fills the available area and adapts to resize and rotation without stretching.
-- [ ] **G2.** Each device type keeps its aspect ratio, centered, with black bars or a background filling the rest. On desktop the play area is never wider than 2:1.
+- [ ] **G2.** Each device type keeps its aspect ratio, centered, with a cover background or black bars filling the rest. On desktop the play area is never wider than 2:1.
   - Unity: a WebGL template such as MirraGamesTemplate handles this.
 - [ ] **G3.** Orientation is never locked in code. It is set in the platform console.
 - [ ] **G4.** Nothing is cut off, overlapping or off-screen at any size, and nothing sits under a phone notch.
@@ -192,7 +194,7 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 - [ ] **G6.** Buttons are big and spaced enough for fingers, so taps don't land on the wrong one.
 - [ ] **G7.** Every popup has a visible close button.
 - [ ] **G8.** No browser popups such as alert, confirm or prompt.
-- [ ] **G9.** Icons are universal: gear for settings, speaker for sound, globe for language.
+- [ ] **G9.** Icons are drawn, not emoji, and universal: gear for settings, speaker for sound, globe for language.
 - [ ] **G10.** No fullscreen button.
 - [ ] **G11.** No exit or quit button.
 - [ ] **G12.** No browser scroll bars or pull-to-refresh. Scrolling inside the game is fine.
@@ -201,13 +203,14 @@ One checklist for Unity WebGL games on 12 web platforms, listed in Sources. It c
 - [ ] **G15.** Complex mechanics get a short, visual tutorial at the start that players can skip.
 - [ ] **G16.** Cutscenes and intros can be skipped.
 - [ ] **G17.** The game tells the player clearly when all content is finished.
+- [ ] **G18.** The title in the game matches the title submitted to the platform.
 
 **Platform-specific**
 
-- [ ] **G18.** **YouTube:** No icons that look like the platform's close, mute or menu buttons.
-- [ ] **G19.** **YouTube, GamePix:** No rotate overlay. The game stays playable at any aspect ratio, using black bars.
-- [ ] **G20.** **GameDistribution:** A "rotate your device" overlay shows when the device is in the wrong orientation. Yandex and CrazyGames show their own.
-- [ ] **G21.** **Poki:** The desktop canvas is 16:9 and scales to 640x360, 836x470 and 1031x580.
+- [ ] **G19.** **YouTube:** No icons that look like the platform's close, mute or menu buttons.
+- [ ] **G20.** **YouTube, GamePix:** No rotate overlay. The game stays playable at any aspect ratio, using black bars.
+- [ ] **G21.** **GameDistribution:** A "rotate your device" overlay shows when the device is in the wrong orientation. Yandex and CrazyGames show their own.
+- [ ] **G22.** **Poki:** The desktop canvas is 16:9 and scales to 640x360, 836x470 and 1031x580.
 
 ## H. Localization
 
