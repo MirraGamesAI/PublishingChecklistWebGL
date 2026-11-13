@@ -7,7 +7,8 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 
 1. Main items pass on every platform: build them once.
 2. Items that start with a platform name apply only there: enable them in code with a platform check.
-3. Item numbers let QA report a failure briefly, like "G4 failed".
+3. Blocks marked Optional cover features a game may not have. Skip the block if the game lacks the feature, otherwise every check in it is required.
+4. Item numbers let QA report a failure briefly, like "G4 failed".
 
 ## A. Build & performance
 
@@ -62,7 +63,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **B11.** Interstitials never show during active play, and never from menu, settings, shop or inventory buttons.
 - [ ] **B12.** A cooldown in the game keeps interstitials at least 3 minutes apart. It is configurable per platform.
 
-**Rewarded ads**
+**Rewarded ads** (Optional)
 
 - [ ] **B13.** A rewarded ad starts only from a button with a video icon that names the exact reward. The button is never green.
 - [ ] **B14.** The reward is a bonus. Every level can be finished without watching ads.
@@ -84,7 +85,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **B24.** **CrazyGames, GameDistribution:** In-game banners, if used, go only on non-gameplay screens that stay open 5+ seconds. Max 2 per screen, never over the UI, at least 20 px from buttons.
 - [ ] **B25.** **Poki:** No custom "ad blocked" messages: the platform shows its own.
 
-## C. In-app purchases
+## C. In-app purchases (Optional)
 
 - [ ] **C1.** Purchases go only through the platform SDK. No outside payment pages or stores.
 - [ ] **C2.** The game is complete and balanced with purchases turned off.
@@ -107,7 +108,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 
 ## D. User data
 
-**Saves**
+**Saves and personal data**
 
 - [ ] **D1.** All saves go through one save layer. It uses the platform's save API wherever one exists, and PlayerPrefs only where there is none.
   - Unity: one save interface with a backend per platform.
@@ -120,13 +121,13 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **D8.** A missing or broken save starts a fresh game instead of crashing.
 - [ ] **D9.** Saves never crash the game when browser storage is blocked, such as in private mode.
   - Unity: wrap every storage call in try/catch.
+- [ ] **D10.** No personal data fields: age, email, location. Name input is allowed only with a profanity filter.
 
-**Accounts and personal data**
+**Login** (Optional)
 
-- [ ] **D10.** Guest play is the default, and no login is needed to start or play.
-- [ ] **D11.** Login opens only when the player presses a button, with a short reason why.
-- [ ] **D12.** Only the platform's own account is used. No Google, Facebook or email logins.
-- [ ] **D13.** No personal data fields: age, email, location. Name input is allowed only with a profanity filter.
+- [ ] **D11.** Guest play is the default, and no login is needed to start or play.
+- [ ] **D12.** Login opens only when the player presses a button, with a short reason why.
+- [ ] **D13.** Only the platform's own account is used. No Google, Facebook or email logins.
 - [ ] **D14.** Players are identified by the platform user ID, never by username or local data.
 - [ ] **D15.** Guest progress carries over at login, and synced progress follows the player across devices.
 
@@ -263,7 +264,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **J7.** **YouTube:** Only the platform's pause and resume events drive pausing, never the browser's tab-visibility API.
 - [ ] **J8.** **YouTube:** On the platform's pause event, everything stops, rendering and network calls included.
 
-## K. Social interactions
+## K. Social interactions (Optional)
 
 - [ ] **K1.** Share, rate, leaderboards, achievements and invites use only the platform SDK.
 - [ ] **K2.** Where a feature isn't available, its button and every mention of it are hidden.
@@ -279,7 +280,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **K9.** **YouTube, GameDistribution, GamePix:** No share buttons or share prompts.
 - [ ] **K10.** **GamePix:** No "Rate us" or "More games" buttons.
 
-## L. Multiplayer
+## L. Multiplayer (Optional)
 
 - [ ] **L1.** A match starts within seconds even when nobody is online, thanks to bots or a solo mode.
 - [ ] **L2.** Solo play is as easy to find as multiplayer.

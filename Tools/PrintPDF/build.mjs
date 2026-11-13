@@ -28,6 +28,7 @@ const LANGUAGES = {
     howToRead: "How to read",
     sections: "Sections",
     platformSpecific: "Platform-specific",
+    optional: "Optional",
     checkedOn: "Checked on",
     checkForms: { one: "check", other: "checks" },
     sectionForms: { one: "section", other: "sections" },
@@ -36,6 +37,7 @@ const LANGUAGES = {
     howToRead: "Как читать",
     sections: "Разделы",
     platformSpecific: "Для отдельных площадок",
+    optional: "Опционально",
     checkedOn: "Проверено",
     checkForms: { one: "проверка", few: "проверки", many: "проверок", other: "проверки" },
     sectionForms: { one: "раздел", few: "раздела", many: "разделов", other: "раздела" },
@@ -108,6 +110,12 @@ function splitPlatforms(text) {
   return { platforms: names, text: match[2] }
 }
 
+/** Splits a trailing "(Optional)" mark off a section title. */
+function splitOptional(title, strings) {
+  const suffix = ` (${strings.optional})`
+  return title.endsWith(suffix) ? { title: title.slice(0, -suffix.length), optional: true } : { title, optional: false }
+}
+
 function appendToList(blocks, entry) {
   const last = blocks[blocks.length - 1]
   if (last?.type === "list") last.entries.push(entry)
@@ -115,7 +123,7 @@ function appendToList(blocks, entry) {
 }
 
 /** Parses the checklist's markdown subset into a title, notices, intro, guide and sections. */
-function parseChecklist(markdown) {
+function parseChecklist(markdown, strings) {
   const checklist = { title: "", notices: [], lead: [], guide: [], sections: [] }
   let section = null
   let lastItem = null
@@ -143,7 +151,7 @@ function parseChecklist(markdown) {
     if ((match = /^# (.+)$/.exec(line))) {
       checklist.title = match[1]
     } else if ((match = /^## (?:([A-Z])\. )?(.+)$/.exec(line))) {
-      section = { letter: match[1] ?? "", title: match[2], blocks: [], itemCount: 0 }
+      section = { letter: match[1] ?? "", ...splitOptional(match[2], strings), blocks: [], itemCount: 0 }
       checklist.sections.push(section)
       lastItem = null
     } else if ((match = /^- \[ \] \*\*([A-Z]\d+)\.\*\* (.+)$/.exec(line)) && section) {
@@ -153,7 +161,8 @@ function parseChecklist(markdown) {
     } else if ((match = /^\s+- (.+)$/.exec(line)) && lastItem) {
       lastItem.hints.push(match[1])
     } else if ((match = /^\*\*(.+?)\*\*(?: \((.+)\))?$/.exec(line)) && section) {
-      section.blocks.push({ type: "label", text: match[1], note: match[2] ?? "" })
+      const optional = match[2] === strings.optional
+      section.blocks.push({ type: "label", text: match[1], note: optional ? "" : match[2] ?? "", optional })
       lastItem = null
     } else if ((match = /^\d+\. (.+)$/.exec(line))) {
       if (section) appendToList(section.blocks, match[1])
@@ -177,6 +186,10 @@ function renderHint(hint) {
   return `<p class="hint"><span class="hint-label">${match[1]}</span>${renderInline(match[2])}</p>`
 }
 
+function renderOptional(strings) {
+  return `<span class="optional">${escapeHtml(strings.optional)}</span>`
+}
+
 function renderNotice(notice) {
   return `<aside class="notice notice-${notice.kind}">${notice.lines.map((line) => `<p>${renderInline(line)}</p>`).join("")}</aside>`
 }
@@ -194,7 +207,8 @@ function renderBlock(block, strings) {
     case "label": {
       const isPlatformLabel = block.text === strings.platformSpecific
       const note = block.note ? `<span class="label-note">${renderInline(block.note)}</span>` : ""
-      return `<div class="label${isPlatformLabel ? " label-platform" : ""}">${escapeHtml(block.text)}${note}</div>`
+      const optional = block.optional ? renderOptional(strings) : ""
+      return `<div class="label${isPlatformLabel ? " label-platform" : ""}">${escapeHtml(block.text)}${optional}${note}</div>`
     }
     case "list":
       return `<ol class="sources">${block.entries.map((entry) => {
@@ -214,7 +228,7 @@ function sectionAnchor(section, index) {
 function renderSection(section, index, strings) {
   const letter = section.letter ? `<span class="letter">${section.letter}</span>` : ""
   return `<section class="section${section.letter ? "" : " section-plain"}" id="${sectionAnchor(section, index)}">
-<h2>${letter}<span>${escapeHtml(section.title)}</span></h2>
+<h2>${letter}<span>${escapeHtml(section.title)}</span>${section.optional ? renderOptional(strings) : ""}</h2>
 ${section.blocks.map((block) => renderBlock(block, strings)).join("\n")}
 </section>`
 }
@@ -239,7 +253,7 @@ function renderCover(checklist, language, logo) {
     .join("")
   const contents = checklist.sections
     .map((section, index) => section.letter
-      ? `<a href="#${sectionAnchor(section, index)}"><span class="letter letter-small">${section.letter}</span><span class="contents-title">${escapeHtml(section.title)}</span><span class="contents-count">${section.itemCount}</span></a>`
+      ? `<a href="#${sectionAnchor(section, index)}"><span class="letter letter-small">${section.letter}</span><span class="contents-title">${escapeHtml(section.title)}${section.optional ? renderOptional(strings) : ""}</span><span class="contents-count">${section.itemCount}</span></a>`
       : "")
     .join("")
   const meta = [
@@ -327,6 +341,8 @@ h1 { margin: 10px 0 14px; font-size: 30pt; line-height: 1.08; letter-spacing: -0
 .label { margin: 12px 0 0; padding: 0 0 4px; font-size: 7.2pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); break-after: avoid; }
 .label-platform { color: var(--accent); }
 .label-note { margin-left: 8px; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--muted); }
+.optional { display: inline-block; margin-left: 8px; padding: 0 7px; border: 1px solid #c3cad3; border-radius: 999px; color: var(--muted); font-size: 6.8pt; font-weight: 600; letter-spacing: 0.06em; line-height: 1.7; text-transform: uppercase; vertical-align: 1px; }
+.section h2 .optional { margin-left: 0; }
 .item { display: grid; grid-template-columns: 12px 32px 1fr; column-gap: 9px; padding: 4px 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
 .box { width: 11px; height: 11px; margin-top: 2.5px; border: 1.4px solid #9aa5b1; border-radius: 3px; }
 .id { font-size: 8.4pt; font-weight: 700; color: var(--accent); padding-top: 0.5px; font-variant-numeric: tabular-nums; }
@@ -417,7 +433,7 @@ function buildDocument(document, outputDirectory, browser, logo) {
   }
   if (!fs.existsSync(document.markdown)) throw new Error(`Markdown file not found: ${document.markdown}`)
 
-  const checklist = parseChecklist(fs.readFileSync(document.markdown, "utf8"))
+  const checklist = parseChecklist(fs.readFileSync(document.markdown, "utf8"), LANGUAGES[document.language])
   const baseName = path.basename(document.markdown, path.extname(document.markdown))
   const htmlPath = path.join(outputDirectory, `${baseName}.html`)
   const pdfPath = path.join(outputDirectory, `${baseName}.pdf`)
