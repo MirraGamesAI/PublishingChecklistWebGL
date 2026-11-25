@@ -45,6 +45,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **A21.** `Auto test` **YouTube:** No network requests except through the platform SDK.
 - [ ] **A22.** `Auto test` **VK:** The platform's init event is sent at startup, or the game won't run.
 - [ ] **A23.** `Ask AI` **GamePix:** No third-party SDKs besides the GamePix and Xsolla ones.
+- [ ] **A24.** `Auto test` **GameDistribution:** The `<title>` text in `index.html` exactly matches the game title in the platform draft.
 
 ## B. Advertisement
 
