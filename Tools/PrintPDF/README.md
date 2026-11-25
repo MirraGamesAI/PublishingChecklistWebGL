@@ -7,7 +7,7 @@ Builds print-ready A4 PDFs from the checklist markdown files: [publishing-checkl
 | `build.mjs` | Turns the markdown into a styled HTML page and prints it to PDF with headless Chrome or Edge |
 | `Assets/MirraGames.png` | Company logo on the cover, skipped with a warning if missing |
 | `Output/` | Generated HTML and PDF, ignored by git |
-| `../../CHANGELOG.md` | Its first heading supplies the version on the cover, skipped with a warning if missing |
+| `../../CHANGELOG.md` | The first version row of its table supplies the version on the cover, skipped with a warning if missing |
 
 ### Usage
 
