@@ -7,7 +7,7 @@ One checklist for publishing Unity WebGL games on 13 web platforms, kept by Mirr
 | [Markdown/publishing-checklist.md](Markdown/publishing-checklist.md) | The checklist in English |
 | [Markdown/publishing-checklist-russian.md](Markdown/publishing-checklist-russian.md) | The same checklist in Russian |
 | [Tools/PrintPDF](Tools/PrintPDF/README.md) | Builds print-ready PDFs of both |
-| [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
+| [CHANGELOG.md](CHANGELOG.md) | Index of what changed in each version |
 
 ### Build the PDFs
 
@@ -22,4 +22,4 @@ The PDFs appear in `Tools/PrintPDF/Output/`.
 1. Change both language files together, so they stay the same item for item.
 2. Keep item numbers permanent: a new item takes the next free number in its section, and a removed number is never reused.
 3. Put the checks a person must do first. Checks a script or an AI can take over go under "Can be automated" with an `Auto test` or `Ask AI` marker.
-4. Raise the version in `CHANGELOG.md`. The PDF cover reads it from there.
+4. Add the version's notes under `Documentation/Changelogs/` and a row for it at the top of the table in `CHANGELOG.md`. The PDF cover reads the version from that row.

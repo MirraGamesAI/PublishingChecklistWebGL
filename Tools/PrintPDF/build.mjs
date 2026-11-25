@@ -274,11 +274,11 @@ function readLogo() {
   }
 }
 
-/** Reads the version from the changelog's first heading, such as "# Name 1.2.3". Returns an empty string if there is none. */
+/** Reads the version from the changelog's index table: the first row that holds one, such as "| Name | 1.2.3 | ... |". Returns an empty string if there is none. */
 function readVersion() {
   try {
-    const heading = /^# .*$/m.exec(fs.readFileSync(CHANGELOG_PATH, "utf8"))
-    return /(\d+\.\d+\.\d+)\s*$/.exec(heading?.[0] ?? "")?.[1] ?? ""
+    const row = /^\|[^|\n]*\|\s*(\d+\.\d+\.\d+)\s*\|/m.exec(fs.readFileSync(CHANGELOG_PATH, "utf8"))
+    return row?.[1] ?? ""
   } catch {
     console.warn(`Changelog not found, building without a version: ${CHANGELOG_PATH}`)
     return ""

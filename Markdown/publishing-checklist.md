@@ -74,6 +74,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **B16.** No rewarded buttons during active play. A continue option shows at the same time, at least as large, next to or above the reward button.
 - [ ] **B17.** Rewarded offers are occasional: a revive at most once per attempt, and never right after an interstitial.
 - [ ] **B18.** The same reward can also be earned without ads, for example with coins.
+- [ ] **B27.** The reward is still given when the player leaves the ad open for a long time, such as 10 minutes, and closes it later.
 
 **Banners**
 
@@ -84,6 +85,8 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **B20.** **GameDistribution:** A preroll ad plays after the first press of Play.
 - [ ] **B21.** **CrazyGames, GameDistribution:** In-game banners, if used, go only on non-gameplay screens that stay open 5+ seconds. Max 2 per screen, never over the UI, at least 20 px from buttons.
 - [ ] **B22.** **Poki:** No custom "ad blocked" messages: the platform shows its own.
+- [ ] **B28.** **Yandex:** Timer interstitials, if used, run only in real-time games with levels longer than 5 minutes or no levels. A 2-second countdown such as "Ad in 2, 1" shows first, with the game paused.
+- [ ] **B29.** **Yandex:** In turn-based games such as puzzles, quizzes and merge games, interstitials can also show right after a player's move, with no countdown.
 
 **Can be automated**
 
@@ -239,6 +242,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 - [ ] **H1.** The game starts in the detected language, with no language picker before play.
 - [ ] **H2.** A manual language switch, if present, uses a globe icon and shows each language by its own name (English, Русский).
 - [ ] **H3.** Text fits its space in every language. Russian runs about 30% longer than English.
+- [ ] **H12.** The language is saved only when the player changes it in the game. Until then, it comes from the platform at every launch.
 
 **Platform-specific**
 
@@ -374,7 +378,7 @@ One checklist for Unity WebGL games on 13 web platforms, listed in Sources. It c
 
 ## Sources
 
-Checked on 10 November 2026, together with Mirra Games publishing experience. Playgama was added on 13 November 2026. Sources marked "partial" are platforms that publish only part of their rules.
+Checked on 10 November 2026, together with Mirra Games publishing experience. Playgama was added on 13 November 2026. Yandex ad placement was added on 25 November 2026. Sources marked "partial" are platforms that publish only part of their rules.
 
 1. [CrazyGames requirements](https://docs.crazygames.com/requirements/intro/)
 2. [GameDistribution developer guidelines](https://static.gamedistribution.com/developer/developers-guidelines.html)
@@ -393,3 +397,4 @@ Checked on 10 November 2026, together with Mirra Games publishing experience. Pl
 15. [VK moderation rules, partial](https://dev.vk.ru/en/games-catalog-rules)
 16. [Playgama game requirements](https://wiki.playgama.com/playgama/game-requirements)
 17. [Playgama Bridge SDK required steps](https://wiki.playgama.com/playgama/bridge-sdk/api)
+18. [Yandex Games ad placement](https://yandex.com/dev/games/doc/en/requirements/4/4)
